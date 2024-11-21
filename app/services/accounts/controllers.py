@@ -15,6 +15,7 @@ from .models import User
 from .repositories import UserRepository, password_hasher, provide_user_repository
 from .security import oauth2_auth
 
+from datetime import datetime
 
 class UserController(Controller):
     """Controller for user management."""
@@ -82,6 +83,9 @@ class AuthController(Controller):
         user = users_repo.get_one_or_none(username=data.username)
         if not user or not password_hasher.verify(data.password, user.password):
             raise HTTPException(detail="Invalid username or password", status_code=401)
+
+        user.last_login = datetime.utcnow()
+        users_repo.update(user)
 
         return oauth2_auth.login(
             identifier=str(user.username),

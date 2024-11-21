@@ -4,6 +4,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
+from datetime import datetime
+
 if TYPE_CHECKING:
     from app.services.expenses.models import Debt, Expense
 
@@ -17,6 +19,7 @@ class User(Base):
     email: Mapped[Optional[str]] = mapped_column(unique=True, index=True)
     password: Mapped[str]
     is_active: Mapped[bool] = mapped_column(default=True)
+    last_login: Mapped[Optional[datetime]] = mapped_column(default=None)
 
     created_expenses: Mapped[list["Expense"]] = relationship(back_populates="created_by")
     debts: Mapped[list["Debt"]] = relationship(back_populates="user")
